@@ -1,3 +1,17 @@
+try:
+    import dns.resolver
+    dns.resolver.default_resolver = dns.resolver.Resolver(configure=False)
+    dns.resolver.default_resolver.nameservers = ['8.8.8.8', '1.1.1.1']
+    print("Network Patch applied: Forcing public DNS resolution (8.8.8.8).")
+except Exception as e:
+    print(f"Could not apply network patch: {e}")
+
+# --- YOUR ORIGINAL IMPORTS CONTINUE BELOW ---
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from motor.motor_asyncio import AsyncIOMotorClient
+from beanie import init_beanie
+
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -23,7 +37,7 @@ from app.models.notification import Notification
 from app.models.audit_log import AuditLog
 
 
-from app.routers import auth, patients, appointments, doctors, prescriptions
+from app.routers import auth, patients, appointments, doctors, prescriptions, billing
 
 
 @asynccontextmanager
@@ -89,3 +103,4 @@ app.include_router(patients.router)
 app.include_router(appointments.router)
 app.include_router(doctors.router)
 app.include_router(prescriptions.router)
+app.include_router(billing.router)
