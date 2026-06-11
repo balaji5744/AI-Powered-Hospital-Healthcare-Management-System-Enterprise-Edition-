@@ -1,14 +1,20 @@
 from beanie import Document
 from pydantic import EmailStr, Field
 from datetime import datetime
+from typing import Optional
 
 class User(Document):
     email: EmailStr
     hashed_password: str
-    role: str  # super_admin|hospital_admin|doctor|nurse|receptionist|lab_tech|pharmacist|billing|patient
+    role: str
     hospital_id: str
     is_active: bool = True
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    # --- ADD THESE 3 NEW FIELDS ---
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    department: Optional[str] = None
 
     class Settings:
-        name = "users"  
+        name = "users"

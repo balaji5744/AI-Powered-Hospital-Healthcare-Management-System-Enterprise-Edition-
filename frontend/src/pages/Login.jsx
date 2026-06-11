@@ -12,6 +12,7 @@ export default function Login() {
   } = useForm();
   const { login } = useAuth();
   const navigate = useNavigate();
+
   const [apiError, setApiError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,25 +20,24 @@ export default function Login() {
     setIsLoading(true);
     setApiError("");
     try {
-      // 🛠️ FIX: Automatically trim invisible spaces from autocomplete
       const cleanEmail = data.email.trim();
-
-      const user = await login(cleanEmail, data.password);
-      // Redirect based on role
-      navigate(`/${user.role}/dashboard`);
+      await login(cleanEmail, data.password);
+      navigate("/dashboard");
     } catch (err) {
-      setApiError("Invalid credentials. Please try again.");
+      setApiError(
+        "Invalid credentials. Please verify your email and password.",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
         <div className="flex flex-col items-center mb-8">
-          <div className="h-14 w-14 bg-brand-50 rounded-full flex items-center justify-center mb-4">
-            <Activity className="h-8 w-8 text-brand-600" />
+          <div className="h-14 w-14 bg-blue-50 rounded-full flex items-center justify-center mb-4">
+            <Activity className="h-8 w-8 text-blue-600" />
           </div>
           <h2 className="text-2xl font-bold text-slate-900">
             HospitalOS Portal
@@ -62,8 +62,8 @@ export default function Login() {
             </label>
             <input
               {...register("email", { required: "Email is required" })}
-              className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all"
-              placeholder="doctor@hospital.com"
+              className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+              placeholder="admin@hospital.com"
               autoComplete="off"
             />
             {errors.email && (
@@ -80,7 +80,7 @@ export default function Login() {
             <input
               type="password"
               {...register("password", { required: "Password is required" })}
-              className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all"
+              className="w-full px-4 py-2.5 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
               placeholder="••••••••"
             />
           </div>
@@ -88,7 +88,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 rounded-lg transition-colors duration-200 flex justify-center items-center"
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-2.5 rounded-lg transition-colors duration-200 flex justify-center items-center"
           >
             {isLoading ? "Authenticating..." : "Sign In"}
           </button>

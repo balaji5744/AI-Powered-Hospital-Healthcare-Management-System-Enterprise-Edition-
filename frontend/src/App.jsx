@@ -1,48 +1,42 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
-import DashboardLayout from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 
-// Route Protector Wrapper
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user } = useAuth();
-  if (!user) return <Navigate to="/login" />;
-  if (allowedRoles && !allowedRoles.includes(user.role))
-    return <Navigate to="/unauthorized" />;
-  return children;
-};
-
 export default function App() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center text-slate-500">
+        Loading HospitalOS...
+      </div>
+    );
+  }
+
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
+    <Routes>
+      {/* Public Routes */}
+      <Route
+        path="/"
+        element={
+          user ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+      <Route
+        path="/login"
+        element={user ? <Navigate to="/dashboard" replace /> : <Login />}
+      />
 
-          {/* Wrap protected routes inside the DashboardLayout.
-            React Router will automatically inject these into the <Outlet /> 
-          */}
-          <Route
-            element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
-            {/* Patient Routes */}
-            <Route path="/patient/dashboard" element={<Dashboard />} />
-
-            {/* Doctor Routes */}
-            <Route path="/doctor/dashboard" element={<Dashboard />} />
-
-            {/* Add more routes here later (e.g., /patient/appointments) */}
-          </Route>
-
-          {/* Catch all - redirect to login */}
-          <Route path="*" element={<Navigate to="/login" />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+      {/* Protected Routes */}
+      <Route
+        path="/dashboard"
+        element={user ? <Dashboard /> : <Navigate to="/login" replace />}
+      />
+    </Routes>
   );
 }

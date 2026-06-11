@@ -68,7 +68,10 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+# --- ADD THIS PRINT STATEMENT ---
+    print(f"DEBUG: Comparing input '{form_data.password}' with DB hash '{user.hashed_password}'")
+# --------------------------------
+
     # Generate the JWT Token carrying the user's email and role
     access_token = create_access_token(data={"sub": user.email, "role": user.role})
     

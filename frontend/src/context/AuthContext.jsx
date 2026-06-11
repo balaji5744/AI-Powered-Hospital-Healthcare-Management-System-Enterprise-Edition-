@@ -8,14 +8,24 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on page load
     const storedUser = localStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        if (parsed && parsed.role) {
+          setUser(parsed);
+        } else {
+          logout(); // Clear corrupted data
+        }
+      } catch (e) {
+        logout();
+      }
+    }
     setLoading(false);
   }, []);
 
   const login = async (email, password) => {
-    // FastAPI requires form-urlencoded data for OAuth2
+    // FastAPI requires URL Encoded form data for OAuth2
     const formData = new URLSearchParams();
     formData.append("username", email);
     formData.append("password", password);
@@ -24,17 +34,10 @@ export const AuthProvider = ({ children }) => {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
 
-    // 1. Extract exactly what your FastAPI backend sends
     const { access_token, role, user_id } = response.data;
 
-    // 2. Build the user object manually for React to use
-    const userData = {
-      email: email, // We already know this from the login form
-      role: role,
-      id: user_id,
-    };
+    const userData = { email, role, id: user_id };
 
-    // 3. Save to browser memory
     localStorage.setItem("token", access_token);
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
