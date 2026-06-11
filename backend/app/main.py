@@ -12,14 +12,10 @@ from contextlib import asynccontextmanager
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 
-from fastapi import FastAPI
-from contextlib import asynccontextmanager
-from motor.motor_asyncio import AsyncIOMotorClient
-from beanie import init_beanie
 
 # Import your settings
 from app.config import settings
-
+from app.routers import ai
 # Import ALL the models you just created in Step 4
 from app.models.user import User
 from app.models.patient import Patient
@@ -35,9 +31,10 @@ from app.models.admission import Admission
 from app.models.vitals import Vitals
 from app.models.notification import Notification
 from app.models.audit_log import AuditLog
-
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import auth, patients, appointments, doctors, prescriptions, billing
+from app.routers import clinical
 
 
 @asynccontextmanager
@@ -87,6 +84,20 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+from fastapi.middleware.cors import CORSMiddleware
+
+# Allow your React frontend to communicate with this backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # A simple root check
 @app.get("/", tags=["Health Check"])
 async def health_check():
@@ -104,3 +115,5 @@ app.include_router(appointments.router)
 app.include_router(doctors.router)
 app.include_router(prescriptions.router)
 app.include_router(billing.router)
+app.include_router(clinical.router)
+app.include_router(ai.router)
