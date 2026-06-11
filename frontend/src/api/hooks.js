@@ -1,73 +1,97 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "./axios"; // Assuming this is where your interceptor is
+import api from "./axios";
 
-// --- FETCHING DATA (GET) ---
+// ==========================================
+// 1. ADMIN HOOKS
+// ==========================================
+export const useAdminStats = () => {
+  return useQuery({
+    queryKey: ["adminStats"],
+    queryFn: async () => {
+      const { data } = await api.get("/admin/stats");
+      return data;
+    },
+  });
+};
 
+// ==========================================
+// 2. PATIENT APPOINTMENT HOOKS
+// ==========================================
 export const useMyAppointments = () => {
   return useQuery({
-    queryKey: ["appointments", "me"],
+    queryKey: ["myAppointments"],
     queryFn: async () => {
-      const { data } = await axiosInstance.get("/appointments/me");
-      return data.data || data; // Adjust based on your FastAPI response shape
+      const { data } = await api.get("/appointments/me");
+      return data;
     },
   });
 };
-
-export const useDepartments = () => {
-  return useQuery({
-    queryKey: ["departments"],
-    queryFn: async () => {
-      const { data } = await axiosInstance.get("/departments/");
-      return data.data;
-    },
-  });
-};
-
-// --- MUTATIONS (POST/PATCH - for Buttons!) ---
 
 export const useBookAppointment = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (appointmentData) => {
-      const { data } = await axiosInstance.post(
-        "/appointments/",
-        appointmentData,
-      );
+      const { data } = await api.post("/appointments/", appointmentData);
       return data;
     },
     onSuccess: () => {
-      // This forces the dashboard to instantly refresh and show the new appointment!
-      queryClient.invalidateQueries(["appointments", "me"]);
-      alert("Appointment booked successfully!");
-    },
-    onError: (error) => {
-      alert(error.response?.data?.detail || "Failed to book slot.");
+      queryClient.invalidateQueries({ queryKey: ["myAppointments"] });
     },
   });
 };
 
-export const useAdminStats = () => {
+// ==========================================
+// 3. DOCTOR HOOKS (DYNAMIC FETCHING)
+// ==========================================
+export const useDoctorsByDepartment = (department) => {
   return useQuery({
-    queryKey: ["admin", "stats"],
+    queryKey: ["doctors", department],
     queryFn: async () => {
-      // This calls the /admin/stats endpoint we built on Backend Day 1
-      const { data } = await axiosInstance.get("/admin/stats");
-      return data.data;
-    },
-  });
-};
-
-export const useAvailableSlots = (doctorId, date) => {
-  return useQuery({
-    queryKey: ["slots", doctorId, date],
-    queryFn: async () => {
-      // Calls the slot generation engine we built on Backend Day 2
-      const { data } = await axiosInstance.get(
-        `/appointments/doctors/${doctorId}/slots?date_str=${date}`,
+      if (!department) return [];
+      const { data } = await api.get(
+        `/doctors?department=${encodeURIComponent(department)}`,
       );
-      return data.available_slots;
+      return data;
     },
-    // Only run this fetch if the user has actually selected a doctor and a date!
-    enabled: !!doctorId && !!date,
+    enabled: !!department,
+  });
+};
+
+// ==========================================
+// 4. AUTH / SIGNUP HOOKS
+// ==========================================
+export const useSignupPatient = () => {
+  return useMutation({
+    mutationFn: async (patientData) => {
+      const { data } = await api.post("/auth/register", patientData);
+      return data;
+    },
+  });
+};
+
+// ==========================================
+// 5. PATIENT PROFILE HOOKS
+// ==========================================
+export const usePatientProfile = () => {
+  return useQuery({
+    queryKey: ["patientProfile"],
+    queryFn: async () => {
+      const { data } = await api.get("/patients/me");
+      return data;
+    },
+  });
+};
+
+export const useUpdatePatientProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (updatedData) => {
+      const { data } = await api.put("/patients/me", updatedData);
+      return data;
+    },
+    onSuccess: () => {
+      // Instantly alerts the client UI layer to repaint with clean database entries
+      queryClient.invalidateQueries({ queryKey: ["patientProfile"] });
+    },
   });
 };

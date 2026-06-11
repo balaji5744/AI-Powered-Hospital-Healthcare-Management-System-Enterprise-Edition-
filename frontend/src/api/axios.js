@@ -17,4 +17,25 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
+
+// ==========================================
+// NEW: PATIENT SIGNUP MUTATION
+// ==========================================
+export const useSignupPatient = () => {
+  return useMutation({
+    mutationFn: async (patientData) => {
+      // Sends registration data to your FastAPI backend
+      const { data } = await api.post("/auth/signup", {
+        email: patientData.email,
+        password: patientData.password,
+        name: patientData.name,
+        role: "patient" // Forces the role to be patient
+      });
+      return data;
+    },
+  });
+};
+
+
+
 export default api;

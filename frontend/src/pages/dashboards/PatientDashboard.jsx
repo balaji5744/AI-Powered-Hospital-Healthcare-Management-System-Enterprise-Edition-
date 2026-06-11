@@ -1,75 +1,108 @@
 import React, { useState } from "react";
 import { useMyAppointments } from "../../api/hooks";
+import { CalendarPlus, Clock, MapPin } from "lucide-react";
 import { format } from "date-fns";
+
 import BookAppointment from "../../components/BookAppointment";
 
-const PatientDashboard = () => {
+// ========================================================
+// CRASH-PROOF DATE FORMATTER
+// Prevents the "White Screen of Death" if dates are malformed
+// ========================================================
+const getSafeDate = (dateString) => {
+  if (!dateString) return "TBD";
+  try {
+    const d = new Date(dateString);
+    // If it's an invalid date, return a fallback instead of crashing
+    if (isNaN(d.getTime())) return dateString;
+    return format(d, "MMM dd, yyyy");
+  } catch (error) {
+    return "Pending Date";
+  }
+};
+
+export default function PatientDashboard() {
   const { data: appointments, isLoading } = useMyAppointments();
   const [isBooking, setIsBooking] = useState(false);
 
   if (isLoading)
     return (
-      <div className="p-8 text-gray-500">Loading your health records...</div>
+      <div className="text-slate-500 animate-pulse">
+        Loading your health records...
+      </div>
     );
 
   return (
-    <div className="p-6 relative">
-      <h1 className="text-2xl font-bold mb-6">Patient Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
-          <h3 className="text-gray-500 text-sm font-semibold uppercase">
-            Total Appointments
-          </h3>
-          <p className="text-3xl font-bold">{appointments?.length || 0}</p>
+    <div className="space-y-6 animate-in fade-in duration-500 relative">
+      {/* Header & CTA */}
+      <div className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+        <div>
+          <h2 className="text-xl font-bold text-slate-800">My Appointments</h2>
         </div>
+        <button
+          onClick={() => setIsBooking(true)}
+          className="bg-blue-600 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center shadow-sm"
+        >
+          <CalendarPlus className="h-5 w-5 mr-2" />
+          Book Appointment
+        </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-lg font-semibold">My Appointments</h2>
-          <button
-            onClick={() => setIsBooking(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-          >
-            + Book Appointment
-          </button>
-        </div>
+      {/* Appointments List */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-50 text-gray-600 text-sm border-b">
-              <th className="p-4">Date</th>
-              <th className="p-4">Time Slot</th>
-              <th className="p-4">Department</th>
-              <th className="p-4">Status</th>
+            <tr className="bg-slate-50 text-slate-500 text-sm uppercase tracking-wider border-b border-slate-100">
+              <th className="px-6 py-4 font-semibold">Date & Time</th>
+              <th className="px-6 py-4 font-semibold">Department</th>
+              <th className="px-6 py-4 font-semibold">Status</th>
             </tr>
           </thead>
-          <tbody>
-            {appointments?.length === 0 ? (
+          <tbody className="divide-y divide-slate-100">
+            {!appointments || appointments.length === 0 ? (
               <tr>
-                <td colSpan="4" className="p-4 text-center text-gray-500">
-                  No appointments found.
+                <td
+                  colSpan="3"
+                  className="px-6 py-8 text-center text-slate-500"
+                >
+                  You have no upcoming appointments.
                 </td>
               </tr>
             ) : (
-              appointments?.map((appt) => (
+              appointments.map((appt) => (
                 <tr
-                  key={appt._id || appt.id}
-                  className="border-b hover:bg-gray-50"
+                  key={appt.id || appt._id}
+                  className="hover:bg-slate-50 transition-colors"
                 >
-                  <td className="p-4">
-                    {appt.appointment_date
-                      ? format(new Date(appt.appointment_date), "MMM dd, yyyy")
-                      : "No Date"}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center text-slate-800 font-medium">
+                      <Clock className="h-4 w-4 mr-2 text-slate-400" />
+
+                      {/* FIX: Using the safe formatter here! */}
+                      {getSafeDate(appt.appointment_date)}
+
+                      <span className="ml-2 text-slate-500 font-normal">
+                        at {appt.time_slot}
+                      </span>
+                    </div>
                   </td>
-                  <td className="p-4 font-medium text-gray-900">
-                    {appt.time_slot}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center text-slate-600">
+                      <MapPin className="h-4 w-4 mr-2 text-slate-400" />
+                      {appt.department}
+                    </div>
                   </td>
-                  <td className="p-4">{appt.department}</td>
-                  <td className="p-4">
+                  <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${appt.status === "COMPLETED" ? "bg-blue-100 text-blue-800" : "bg-green-100 text-green-800"}`}
+                      className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
+                        appt.status === "COMPLETED"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : appt.status === "CANCELLED"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-amber-100 text-amber-700"
+                      }`}
                     >
-                      {appt.status}
+                      {appt.status || "SCHEDULED"}
                     </span>
                   </td>
                 </tr>
@@ -78,9 +111,9 @@ const PatientDashboard = () => {
           </tbody>
         </table>
       </div>
+
+      {/* RENDER YOUR WIZARD */}
       {isBooking && <BookAppointment onCancel={() => setIsBooking(false)} />}
     </div>
   );
-};
-
-export default PatientDashboard;
+}
