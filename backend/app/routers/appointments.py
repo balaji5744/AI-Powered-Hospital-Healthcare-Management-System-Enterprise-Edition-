@@ -91,8 +91,8 @@ async def book_appointment(
 async def update_appointment_status(
     id: str, 
     new_status: AppointmentStatus,
-    # 🛠️ TEMPORARY TESTING BYPASS: Allow patient role to update status for testing
-    current_user: User = Depends(require_role(["patient", "super_admin", "hospital_admin", "doctor"]))
+    
+    current_user: User = Depends(require_role(["super_admin", "hospital_admin", "doctor"]))
 ):
     """Strict state machine engine enforcing valid workflow transitions."""
     appointment = await Appointment.get(id)
@@ -123,11 +123,14 @@ async def update_appointment_status(
 
     # 🚀 CELERY BACKGROUND TRIGGER: If confirmed, dispatch the worker alert instantly!
     if new_status == AppointmentStatus.CONFIRMED:
-        # .delay() pushes the execution directly to your running Upstash cloud worker queue
+        
+        patient = await User.get(appointment.patient_id)
+        
         send_appointment_reminder.delay(
-            patient_name=str(current_user.first_name if hasattr(current_user, 'first_name') else "Patient"),
+            patient_name=str(patient.first_name if patient else "Patient"),
             appointment_time=appointment.time_slot
         )
+        
         print("⚡ [FASTAPI] Dispatched reminder payload over to the Upstash cloud worker stream.")
 
     return {"message": f"Appointment status updated to {new_status.value}", "current_status": appointment.status}

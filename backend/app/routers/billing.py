@@ -19,7 +19,7 @@ class InvoiceGenerateRequest(BaseModel):
 @router.post("/generate", status_code=status.HTTP_201_CREATED)
 async def generate_invoice(
     request: InvoiceGenerateRequest,
-    current_user: User = Depends(require_role(["patient", "super_admin", "hospital_admin", "billing"]))
+    current_user: User = Depends(require_role(["super_admin", "hospital_admin", "billing"]))
 ):
     """Aggregates costs from appointments and prescriptions into a validated Invoice."""
     

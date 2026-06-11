@@ -34,7 +34,7 @@ from app.models.audit_log import AuditLog
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth, appointments, clinical, ai, users
 
-from app.routers import auth, patients, appointments, doctors, prescriptions, billing
+from app.routers import auth, patients, appointments, doctors, prescriptions, billing,departments
 from app.routers import clinical,admin
 
 
@@ -120,3 +120,4 @@ app.include_router(clinical.router)
 app.include_router(ai.router)
 app.include_router(users.router)
 app.include_router(admin.router)
+app.include_router(departments.router)
