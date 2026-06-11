@@ -60,7 +60,7 @@ async def get_patient_records(
     return records
 
 @router.get("/records/{patient_id}")
-async def get_patient_records(
+async def get_patient_records_by_id(
     patient_id: str,
     type: Optional[str] = None,
     current_user: User = Depends(require_role(["doctor", "nurse", "patient", "hospital_admin"]))

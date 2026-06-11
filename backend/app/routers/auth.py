@@ -51,7 +51,10 @@ async def register_patient(patient_data: PatientRegisterRequest):
     )
     await new_patient.insert() # Save to MongoDB
 
-    return {"message": "Patient registered successfully", "user_id": str(new_user.id)}
+    return {
+        "message": f"{new_user.role.capitalize()} registered successfully", 
+        "user_id": str(new_user.id)
+    }
 
 
 @router.post("/login")

@@ -32,9 +32,10 @@ from app.models.vitals import Vitals
 from app.models.notification import Notification
 from app.models.audit_log import AuditLog
 from fastapi.middleware.cors import CORSMiddleware
+from app.routers import auth, appointments, clinical, ai, users
 
 from app.routers import auth, patients, appointments, doctors, prescriptions, billing
-from app.routers import clinical
+from app.routers import clinical,admin
 
 
 @asynccontextmanager
@@ -117,3 +118,5 @@ app.include_router(prescriptions.router)
 app.include_router(billing.router)
 app.include_router(clinical.router)
 app.include_router(ai.router)
+app.include_router(users.router)
+app.include_router(admin.router)
