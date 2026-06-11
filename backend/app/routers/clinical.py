@@ -343,3 +343,91 @@ async def dispense_prescription(
     await prescription.save()
     
     return {"status": "success", "message": "Medicines dispensed to patient"}
+
+
+# ==========================================================
+# LAB TESTS - PENDING QUEUE
+# ==========================================================
+
+@router.get("/lab-tests/pending")
+async def get_pending_lab_tests(
+    current_user: User = Depends(require_role(["lab_tech", "hospital_admin", "super_admin"]))
+):
+    """Fetches all lab test orders awaiting processing by technicians."""
+    pending_tests = await LabTest.find(LabTest.status == "Requested").to_list()
+    return pending_tests
+
+
+# ==========================================================
+# CLINICAL HISTORY - VITALS TRACKING
+# ==========================================================
+
+@router.get("/vitals/{patient_id}/history")
+async def get_vitals_history(
+    patient_id: str,
+    current_user: User = Depends(require_role(["nurse", "doctor", "patient", "super_admin"]))
+):
+    """Retrieves chronological health records of vitals for a specific patient card."""
+    from app.models.clinical import Vitals
+    
+    history = await Vitals.find(Vitals.patient_id == patient_id).to_list()
+    return history
+
+
+# ==========================================================
+# PHARMACY - MEDICINE INVENTORY MANAGEMENT
+# ==========================================================
+
+class MedicineCreateRequest(BaseModel):
+    name: str
+    stock_quantity: int
+    reorder_level: int
+
+class StockUpdateRequest(BaseModel):
+    stock_quantity: int
+
+
+@router.post("/medicines", status_code=status.HTTP_201_CREATED)
+async def create_medicine_item(
+    request: MedicineCreateRequest,
+    current_user: User = Depends(require_role(["pharmacist", "super_admin", "hospital_admin"]))
+):
+    """Allows a pharmacist to introduce a new stock item to the pharmacy grid."""
+    from app.models.clinical import Medicine
+    
+    new_medicine = Medicine(
+        name=request.name,
+        stock_quantity=request.stock_quantity,
+        reorder_level=request.reorder_level
+    )
+    await new_medicine.insert()
+    return {"status": "success", "message": "Medicine catalog entry initialized", "id": str(new_medicine.id)}
+
+
+@router.get("/medicines")
+async def get_all_medicines(
+    current_user: User = Depends(require_role(["pharmacist", "doctor", "super_admin", "hospital_admin"]))
+):
+    """Lists every item tracked across the hospital pharmacy inventory."""
+    from app.models.clinical import Medicine
+    
+    medicines = await Medicine.find_all().to_list()
+    return medicines
+
+
+@router.patch("/medicines/{id}")
+async def update_medicine_stock(
+    id: str,
+    request: StockUpdateRequest,
+    current_user: User = Depends(require_role(["pharmacist", "super_admin"]))
+):
+    """Updates the stock counts directly when replenishment orders arrive."""
+    from app.models.clinical import Medicine
+    
+    medicine = await Medicine.get(id)
+    if not medicine:
+        raise HTTPException(status_code=404, detail="Requested item not found in pharmacy registry")
+        
+    medicine.stock_quantity = request.stock_quantity
+    await medicine.save()
+    return {"status": "success", "message": "Inventory tracking ledger modified successfully"}

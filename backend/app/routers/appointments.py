@@ -17,7 +17,14 @@ class AppointmentCreateRequest(BaseModel):
     appointment_date: datetime  # Format: YYYY-MM-DD
     time_slot: str              # Format: "09:00 AM"
 
-# --- 1. GET DOCTOR AVAILABLE SLOTS ---
+# --- 1. GET MY APPOINTMENTS (Moved higher to optimize router matching order) ---
+@router.get("/me")
+async def get_my_appointments(current_user: User = Depends(require_role(["patient", "doctor"]))):
+    if current_user.role == "patient":
+        return await Appointment.find(Appointment.patient_id == str(current_user.id)).to_list()
+    return await Appointment.find(Appointment.doctor_id == str(current_user.id)).to_list()
+
+# --- 2. GET DOCTOR AVAILABLE SLOTS ---
 @router.get("/doctors/{doctor_id}/slots")
 async def get_doctor_slots(
     doctor_id: str, 
@@ -59,16 +66,17 @@ async def get_doctor_slots(
     
     return {"doctor_id": doctor_id, "date": date_str, "available_slots": available_slots}
 
-# --- 2. POST BOOK APPOINTMENT WITH VALIDATION ---
+# --- 3. POST BOOK APPOINTMENT WITH VALIDATION ---
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def book_appointment(
     request: AppointmentCreateRequest,
     current_user: User = Depends(require_role(["patient"]))
 ):
     """Books an appointment ensuring the time slot is actually free."""
-    # Ensure the slot isn't already taken
+    # 🛠️ FIXED: Appended appointment_date matching filter criteria to isolate unique calendar slots
     existing_booking = await Appointment.find_one(
         Appointment.doctor_id == request.doctor_id,
+        Appointment.appointment_date == request.appointment_date,
         Appointment.time_slot == request.time_slot,
         Appointment.status != AppointmentStatus.CANCELLED
     )
@@ -86,13 +94,12 @@ async def book_appointment(
     await new_appointment.insert()
     return {"message": "Appointment requested successfully", "appointment_id": str(new_appointment.id)}
 
-# --- 3. PATCH STATUS (STATE MACHINE) ---
+# --- 4. PATCH STATUS (STATE MACHINE) ---
 @router.patch("/{id}/status")
 async def update_appointment_status(
     id: str, 
     new_status: AppointmentStatus,
-    
-    current_user: User = Depends(require_role(["super_admin", "hospital_admin", "doctor"]))
+    current_user: User = Depends(require_role(["admin", "super_admin", "hospital_admin", "doctor"]))
 ):
     """Strict state machine engine enforcing valid workflow transitions."""
     appointment = await Appointment.get(id)
@@ -101,15 +108,12 @@ async def update_appointment_status(
 
     current = appointment.status
 
-    # Define strict Allowed Transitions mapping
-    # requested -> confirmed -> in_consultation -> completed
-    # any state before completed can transition to cancelled
     allowed_transitions = {
         AppointmentStatus.REQUESTED: [AppointmentStatus.CONFIRMED, AppointmentStatus.CANCELLED],
         AppointmentStatus.CONFIRMED: [AppointmentStatus.IN_CONSULTATION, AppointmentStatus.CANCELLED],
         AppointmentStatus.IN_CONSULTATION: [AppointmentStatus.COMPLETED],
-        AppointmentStatus.COMPLETED: [],  # Final state
-        AppointmentStatus.CANCELLED: []   # Final state
+        AppointmentStatus.COMPLETED: [],  
+        AppointmentStatus.CANCELLED: []   
     }
 
     if new_status not in allowed_transitions.get(current, []):
@@ -121,21 +125,13 @@ async def update_appointment_status(
     appointment.status = new_status
     await appointment.save()
 
-    # 🚀 CELERY BACKGROUND TRIGGER: If confirmed, dispatch the worker alert instantly!
+    # CELERY BACKGROUND TRIGGER: If confirmed, dispatch the worker alert instantly!
     if new_status == AppointmentStatus.CONFIRMED:
-        
         patient = await User.get(appointment.patient_id)
-        
         send_appointment_reminder.delay(
-            patient_name=str(patient.first_name if patient else "Patient"),
+            patient_name=str(patient.first_name if (patient and hasattr(patient, 'first_name')) else "Patient"),
             appointment_time=appointment.time_slot
         )
-        
-        print("⚡ [FASTAPI] Dispatched reminder payload over to the Upstash cloud worker stream.")
+        print("⚡ [FASTAPI] Dispatched reminder payload over to the worker stream.")
 
     return {"message": f"Appointment status updated to {new_status.value}", "current_status": appointment.status}
-@router.get("/me")
-async def get_my_appointments(current_user: User = Depends(require_role(["patient", "doctor"]))):
-    if current_user.role == "patient":
-        return await Appointment.find(Appointment.patient_id == str(current_user.id)).to_list()
-    return await Appointment.find(Appointment.doctor_id == str(current_user.id)).to_list()
