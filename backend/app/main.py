@@ -1,22 +1,27 @@
+# =========================================================
+# NETWORK PATCH FOR DNS ISSUES
+# =========================================================
 try:
     import dns.resolver
     dns.resolver.default_resolver = dns.resolver.Resolver(configure=False)
     dns.resolver.default_resolver.nameservers = ['8.8.8.8', '1.1.1.1']
-    print("Network Patch applied: Forcing public DNS resolution (8.8.8.8).")
+    print("Network Patch applied: Forcing public DNS resolution.")
 except Exception as e:
     print(f"Could not apply network patch: {e}")
 
-# --- YOUR ORIGINAL IMPORTS CONTINUE BELOW ---
-from fastapi import FastAPI
+# =========================================================
+# IMPORTS
+# =========================================================
+from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
+from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime
 
-
-# Import your settings
 from app.config import settings
-from app.routers import ai
-# Import ALL the models you just created in Step 4
+
+# Models
 from app.models.user import User
 from app.models.patient import Patient
 from app.models.doctor import Doctor
@@ -31,27 +36,36 @@ from app.models.admission import Admission
 from app.models.vitals import Vitals
 from app.models.notification import Notification
 from app.models.audit_log import AuditLog
-from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, appointments, clinical, ai, users
 
-from app.routers import auth, patients, appointments, doctors, prescriptions, billing,departments
-from app.routers import clinical,admin
+# Routers
+from app.routers import (
+    auth,
+    patients,
+    appointments,
+    doctors,
+    prescriptions,
+    billing,
+    departments,
+    clinical,
+    ai,
+    users,
+    admin,
+)
 
-
+# =========================================================
+# DATABASE STARTUP / SHUTDOWN
+# =========================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # --- STARTUP LOGIC ---
     print("Starting up... Connecting to MongoDB Atlas.")
-    
-    # Create the Motor client
+
     client = AsyncIOMotorClient(settings.MONGO_URI)
-    
-    # 🐛 QUICK FIX: Trick Beanie into thinking the method exists
+
+    # Temporary compatibility fix
     client.append_metadata = lambda *args, **kwargs: None
-    
-    # Initialize Beanie with the specific database and all document models
+
     await init_beanie(
-        database=client.hospital_db, # Name of your database in Atlas
+        database=client.hospital_db,
         document_models=[
             User,
             Patient,
@@ -66,50 +80,93 @@ async def lifespan(app: FastAPI):
             Admission,
             Vitals,
             Notification,
-            AuditLog
-        ]
+            AuditLog,
+        ],
     )
+
     print("Successfully connected to MongoDB and registered all models!")
-    
-    yield # The application runs while yielding here
-    
-    # --- SHUTDOWN LOGIC ---
+
+    yield
+
     print("Shutting down... Closing MongoDB connection.")
     client.close()
 
-# Initialize the FastAPI app
+
+# =========================================================
+# FASTAPI APP
+# =========================================================
 app = FastAPI(
     title="AI-Powered Hospital Management API",
     description="Enterprise Edition Backend for HMS",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
-from fastapi.middleware.cors import CORSMiddleware
-
-# Allow your React frontend to communicate with this backend
+# =========================================================
+# CORS
+# =========================================================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "http://127.0.0.1:5173"
+        "http://127.0.0.1:5173",
+        "https://your-app.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# A simple root check
+# =========================================================
+# AUDIT LOG MIDDLEWARE
+# =========================================================
+@app.middleware("http")
+async def audit_log_middleware(request: Request, call_next):
+    response = await call_next(request)
+
+    if (
+        request.method in ["POST", "PUT", "PATCH", "DELETE"]
+        and response.status_code < 400
+    ):
+        if "/admin/audit-logs" not in request.url.path:
+            user_id = "ANONYMOUS"
+
+            if hasattr(request.state, "user") and request.state.user:
+                user_id = str(request.state.user.id)
+
+            try:
+                log_entry = AuditLog(
+                    user_id=user_id,
+                    action=request.method,
+                    resource_id=request.url.path,
+                    timestamp=datetime.utcnow(),
+                    ip_address=request.client.host
+                    if request.client
+                    else "127.0.0.1",
+                )
+
+                await log_entry.insert()
+
+            except Exception as e:
+                print(f"⚠️ Audit logging skipped or failed: {str(e)}")
+
+    return response
+
+
+# =========================================================
+# HEALTH CHECK
+# =========================================================
 @app.get("/", tags=["Health Check"])
 async def health_check():
     return {
-        "status": "Healthy", 
-        "message": "Welcome to the Hospital Management System API"
+        "status": "Healthy",
+        "message": "Welcome to the Hospital Management System API",
     }
-    
 
 
-# Add this near the bottom of main.py
+# =========================================================
+# ROUTERS
+# =========================================================
 app.include_router(auth.router)
 app.include_router(patients.router)
 app.include_router(appointments.router)

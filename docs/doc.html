@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI-Powered Hospital Management System - Enterprise Engineering Documentation</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 20mm 15mm 20mm 15mm;
+        }
+        @media print {
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11pt; line-height: 1.6; color: #1e293b; background: #ffffff; }
+            .page-break { page-break-before: always; }
+            h1, h2, h3 { page-break-after: avoid; }
+            pre, code { font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; background-color: #f8fafc !important; border: 1px solid #e2e8f0; }
+        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; color: #1e293b; max-width: 800px; margin: 0 auto; padding: 20px; background: #fafafa; }
+        .cover-page { height: 95vh; display: flex; flex-col; justify-content: center; align-items: flex-start; padding-top: 150px; page-break-after: always; }
+        .title { font-size: 34pt; font-weight: 800; color: #0f172a; line-height: 1.1; margin-bottom: 10px; }
+        .subtitle { font-size: 18pt; font-weight: 400; color: #2563eb; margin-bottom: 50px; text-transform: uppercase; letter-spacing: 1px; }
+        .metadata-box { border-left: 4px solid #2563eb; padding-left: 20px; margin-top: 100px; font-size: 11pt; color: #475569; }
+        h1 { font-size: 20pt; font-weight: 700; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-top: 40px; }
+        h2 { font-size: 14pt; font-weight: 600; color: #1e3a8a; margin-top: 25px; margin-bottom: 10px; }
+        h3 { font-size: 11pt; font-weight: 600; color: #0f172a; margin-top: 15px; }
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-bottom: 20px; padding-left: 25px; }
+        li { margin-bottom: 5px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 10pt; }
+        th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; }
+        th { background-color: #f1f5f9; font-weight: 600; color: #0f172a; }
+        pre { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; rounded: 8px; overflow-x: auto; margin: 15px 0; font-size: 9pt; line-height: 1.4; color: #0f172a; }
+        .diagram { font-family: 'Consolas', monospace; font-size: 9pt; background: #0f172a; color: #38bdf8; padding: 20px; border-radius: 8px; white-space: pre; overflow-x: auto; margin: 20px 0; line-height: 1.3; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .badge { display: inline-block; padding: 2px 6px; font-size: 8pt; font-weight: 700; border-radius: 4px; text-transform: uppercase; }
+        .badge-pk { background-color: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+        .badge-fk { background-color: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+        .badge-idx { background-color: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+    </style>
+</head>
+<body>
+
+    <div class="cover-page">
+        <div class="title">AI-Powered Hospital & Healthcare<br>Management System</div>
+        <div class="subtitle">Enterprise Engineering & Implementation Manual</div>
+        <div style="flex-grow: 1;"></div>
+        <div class="metadata-box">
+            <strong>Project Classification:</strong> 3rd Year Advanced Internship Capstone Deliverable<br>
+            <strong>Core Technology Stack:</strong> FastAPI, Beanie ODM, Motor Driver, React (Vite), MongoDB Atlas, Celery, Upstash Redis, Groq Infrastructure<br>
+            <strong>System Architecture Tier:</strong> Decoupled Multi-Tier Asynchronous Cognitive Framework<br>
+            <strong>Document Identifier:</strong> HMS-ENG-DOC-V1.0.0
+        </div>
+    </div>
+
+    <h1>Table of Contents</h1>
+    <ol style="font-weight: 600; color: #1e3a8a; line-height: 2.0;">
+        <li>System Multi-Tier Micro-Architecture & Logic Routing</li>
+        <li>Production Database Design & Object-Document Mapping (ODM) Topology</li>
+        <li>Cognitive AI Agent Infrastructure & Stateless Context Orchestration</li>
+        <li>Unified System Prompts Matrix Mapping</li>
+        <li>5-Day Sprint Execution Matrix & Cross-Department Functional Framework</li>
+    </ol>
+
+    <div class="page-break"></div>
+
+    <h1>1. System Multi-Tier Micro-Architecture & Logic Routing</h1>
+    <p>The AI-Powered Hospital Management System (HMS) is engineered on a fully decoupled, multi-tier asynchronous micro-architecture. The architecture isolates ingestion layers, transactional states, background micro-workers, and structural AI inference systems. Deployed as a distributed system, the client user interface is served globally via edge infrastructure while the API logic loops process concurrently over containerized cloud runtime structures.</p>
+    
+    <h2>1.1 Enterprise System Topology Blueprint</h2>
+    <p>This diagram maps the structural flow of parameters across the network, detailing the strict security isolation zones and asynchronous transaction fabrics handling concurrent operations across the clusters:</p>
+    
+    <div class="diagram">
++───────────────────────────────────────────────────────────────────────────+
+│             LAYER 1: COMPONENT-DRIVEN CLIENT UI (React SPA)               │
+├───────────────────────────────────────────────────────────────────────────┤
+│  • Client Interface: React Engine (Vite Core Compiler Pipeline)           │
+│  • Local Memory Caching: React Query (TanStack Caching Manager)            │
+│  • Global Session Context Layer: AuthContext Auth Storage System          │
++─────────────────────────────────────┬─────────────────────────────────────+
+                                      │ Secured TLS Ingress Pipeline
+                                      ▼ (Vercel Ingress Shield Router)
++───────────────────────────────────────────────────────────────────────────+
+│         LAYER 2: EDGE CONTROLS & SECURITY INGRESS (FastAPI Core)          │
+├───────────────────────────────────────────────────────────────────────────┤
+│  • Gateway Network Validation: Cross-Origin Resource Isolation Middleware  │
+│  • Dependency Role Firewall: require_role Token Validation Matrix         │
+│  • Request Ingress Interceptor: Global Async AuditLog Database Middleware │
++─────────────────────────────────────┬─────────────────────────────────────+
+                                      │ Non-Blocking Microservice Worker Fabric
+                                      ▼ (Render Container Instances Router)
++───────────────────────────────────────────────────────────────────────────+
+│          LAYER 3: DISTRIBUTED APPLICATION ROUTING (FastAPI)               │
+├───────────────────────────────────────────────────────────────────────────┤
+│  • routers/admin.py        • routers/patients.py    • routers/doctors.py  │
+│  • routers/appointments.py • routers/clinical.py    • routers/billing.py  │
++──────────────────┬───────────────────────────────────────┬────────────────+
+                   │                                       │
+                   │ Motor Drivers Async TCP Pipe          │ Upstash Streaming Pipeline
+                   ▼ (Concurrency Connection Pool)         ▼ (Message Broker Channel)
++──────────────────────────────────────┐ +──────────────────────────────────+
+│    LAYER 4: TRANSACT DATA STORE      │ │   LAYER 5: WORKER TASK FABRIC    │
+├──────────────────────────────────────┤ ├──────────────────────────────────┤
+│  • Primary Database: MongoDB Atlas   │ │  • Distributed Queue: Celery Engine│
+│  • Document Mapper: Beanie ODM Model │ │  • Task Stream Broker: Upstash    │
+│  • Registry Array: 11 Document Models│ │  • Output Transport: SMTP Target │
++──────────────────┬───────────────────+ +──────────────────────────────────+
+                   │
+                   │ LangChain Abstractions (Secure REST REST API Handshake)
+                   ▼ (Stateless JSON Payload Channel)
++───────────────────────────────────────────────────────────────────────────+
+│               LAYER 6: COGNITIVE INTELLIGENCE COGNITION FABRIC            │
+├───────────────────────────────────────────────────────────────────────────┤
+│  • Frame Hardware Processor Engine: Groq Ultra-Low Latency Cloud Gateway  │
+│  • Large Language Model Target: LLAMA 3.1 70B Versatile Processing Base  │
+│  • Struct output Interface: LangChain JsonOutputParser Parsing Protocol   │
++───────────────────────────────────────────────────────────────────────────+</div>
+
+    <h2>1.2 Transactional Traversal Lifecycle Flowchart</h2>
+    <p>This structural flowchart documents the exact end-to-end processing sequence tracking parameter changes when an incoming client request traverses the application layers during an operation:</p>
+
+    <div class="diagram">
+[ Patient Booking Wizard UI ]
+            │  1. Collects description (e.g., "Severe crushing chest pain")
+            ▼
+[ Ingress Security Gateway ]
+            │  2. Extracts Authorization Header; runs token verification check
+            ▼
+[ FastAPI App Routing Tier ]
+            │  3. Formulates LLM Payload; streams data variables to Groq API Cloud
+            ▼
+[ Groq Inference Platform ]
+            │  4. Runs processing; extracts department metadata ("Cardiology")
+            ▼
+[ Beanie ODM Model Engine ]
+            │  5. Maps constraints; commits record state inside MongoDB as "requested"
+            ▼
+[ Upstash Message Broker ]
+            │  6. Appends task payload sequence directly to Redis memory queue
+            ▼
+[ Celery Background Worker ]
+            │  7. Processes message queue, issues automated email confirmation via SMTP
+            ▼
+[ Real-Time Client Matrix ]
+            │  8. React Query invalidates local caches; repaints patient web view</div>
+
+    <div class="page-break"></div>
+
+    <h1>2. Production Database Design & Object-Document Mapping (ODM) Topology</h1>
+    <p>The persistence tier uses a non-relational document topology backed by MongoDB Atlas and managed via the asynchronous Beanie Object-Document Mapper (ODM) built on the Motor driver library. Relationships are strictly established using embedded sub-documents for high-performance atomic read operations, or clean reference pointers mapped back to unique hex strings for transactional boundaries.</p>
+
+    <h2>2.1 Technical Entity-Relationship Logical Model (ERM)</h2>
+    <div class="diagram">
+ +────────────────────────────────┐             +────────────────────────────────┐
+ │          users (Auth)          │             │            patients            │
+ +────────────────────────────────+             +────────────────────────────────+
+ │ <span class="badge badge-pk">pk</span> │ _id            : ObjectId │             │ <span class="badge badge-pk">pk</span> │ _id            : ObjectId │
+ │ <span class="badge badge-idx">uk</span> │ email          : EmailStr │ (1 : 0..1)  │ <span class="badge badge-fk">fk</span> │ user_id        : String   │
+ │    │ hashed_password: String   ├────────────►│    │ phone          : String   │
+ │    │ role           : String   │             │    │ allergies      : Array    │
+ +────┬───────────────────────────+             +────┬───────────────────────────+
+      │                                              │
+      │ (1 : 0..1) Direct Constraint                 │ (1 : N) Reference
+      ▼                                              ▼
+ +────────────────────────────────┐             +────────────────────────────────┐
+ │            doctors             │             │          appointments          │
+ +────────────────────────────────+             +────────────────────────────────+
+ │ <span class="badge badge-pk">pk</span> │ _id            : ObjectId │             │ <span class="badge badge-pk">pk</span> │ _id            : ObjectId │
+ │ <span class="badge badge-fk">fk</span> │ user_id        : String   │ (1 : N)     │ <span class="badge badge-fk">fk</span> │ patient_id     : String   │
+ │ <span class="badge badge-idx">idx</span>│ department     : String   ├────────────►│ <span class="badge badge-fk">fk</span> │ doctor_id      : String   │
+ │    │ consultation_fee: Float   │             │ <span class="badge badge-idx">idx</span>│ appointment_date: DateTime │
+ +────┬───────────────────────────+             +────┬───────────┬───────────┬───+
+      │                                              │           │           │
+      │                                       (1:1)  │     (1:1) │     (1:N) │
+      │ On Consultation Fulfill                      ▼           ▼           ▼
+      │                                         +─────────+ +─────────+ +─────────+
+      └────────────────────────────────────────►│ Prescr. │ │ Invoices│ │Lab_Tests│
+                                                +─────────+ +─────────+ +─────────+</div>
+
+    <h2>2.2 Database System Data Dictionary Matrix</h2>
+    <p>Below are the structural parameters, data tracking types, validation requirements, and relationship paths for the 11 schema tables managing your database engine:</p>
+
+    <h3>1. users Collection</h3>
+    <p>Manages identity validation profiles, encrypted security credentials, and access role classifications.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique Native ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>email</code></td><td>EmailStr</td><td><span class="badge badge-idx">idx</span> Unique Index</td><td>Enforces programmatic uniqueness check</td></tr>
+        <tr><td><code>hashed_password</code></td><td>str</td><td>Encrypted String</td><td>Cryptographic target generated by passlib</td></tr>
+        <tr><td><code>role</code></td><td>str</td><td>RBAC Enforced Enum</td><td>Enforces role check: patient, doctor, nurse, admin</td></tr>
+        <tr><td><code>hospital_id</code></td><td>str</td><td>Logical Isolation Tag</td><td>Defaults to <code>"HOSP-MAIN"</code> configuration</td></tr>
+        <tr><td><code>is_active</code></td><td>bool</td><td>Boolean Flag</td><td>Toggles authorization baseline logic status</td></tr>
+        <tr><td><code>created_at</code></td><td>datetime</td><td>Timestamp</td><td>Populated automatically on object instantiation</td></tr>
+    </table>
+
+    <h3>2. patients Collection</h3>
+    <p>Stores patient records, mobile numbers, and medical histories.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique Native ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>user_id</code></td><td>str</td><td><span class="badge badge-fk">fk</span> <span class="badge badge-idx">idx</span> Unique Reference</td><td>Maps 1:1 back to primary target <code>users._id</code></td></tr>
+        <tr><td><code>first_name</code> / <code>last_name</code></td><td>str</td><td>Text Record Data</td><td>Client identification demographics parameter</td></tr>
+        <tr><td><code>date_of_birth</code></td><td>str</td><td>String (YYYY-MM-DD)</td><td>Used directly for internal age logic routines</td></tr>
+        <tr><td><code>phone</code></td><td>str</td><td>Regex Validation String</td><td>Validated against Indian mobile formatting regex rules</td></tr>
+        <tr><td><code>allergies</code></td><td>List[str]</td><td>Array Parameters List</td><td>List of documented drug contraindications</td></tr>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h3>3. doctors Collection</h3>
+    <p>Tracks provider clinical designations, hospital assignments, and consulting fees.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique Native ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>user_id</code></td><td>str</td><td><span class="badge badge-fk">fk</span> Unique Pointer</td><td>Maps 1:1 back to primary target <code>users._id</code></td></tr>
+        <tr><td><code>department</code></td><td>str</td><td><span class="badge badge-idx">idx</span> B-Tree Index Link</td><td>Department field (e.g., Cardiology, Neurology)</td></tr>
+        <tr><td><code>consultation_fee</code></td><td>float</td><td>Financial Precision Metric</td><td>Used by the billing engine to calculate invoices</td></tr>
+    </table>
+
+    <h3>4. appointments Collection</h3>
+    <p>Schedules appointments, updates status badges, and blocks time slots.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique Native ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>patient_id</code></td><td>str</td><td><span class="badge badge-fk">fk</span> Shared Index</td><td>Maps back to specific chart user target <code>users._id</code></td></tr>
+        <tr><td><code>doctor_id</code></td><td>str</td><td><span class="badge badge-fk">fk</span> Shared Index</td><td>Maps back to specific chart provider target <code>doctors._id</code></td></tr>
+        <tr><td><code>appointment_date</code></td><td>datetime</td><td><span class="badge badge-idx">idx</span> Compound Parameter</td><td>Combines date, provider, and slot for calendars</td></tr>
+        <tr><td><code>status</code></td><td>str</td><td>Enum State Machine</td><td>requested, confirmed, in_consultation, completed</td></tr>
+    </table>
+
+    <h3>5. prescriptions Collection</h3>
+    <p>Saves medication schemas and instructions issued by doctors during consultations.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique Native ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>appointment_id</code></td><td>str</td><td><span class="badge badge-fk">fk</span> <span class="badge badge-idx">idx</span> Unique Link</td><td>Maps 1:1 to prevent duplicate prescriptions</td></tr>
+        <tr><td><code>medicines</code></td><td>List[Dict]</td><td>Sub-Document Layout Array</td><td>Embedded keys list: name, dosage, frequency, duration</td></tr>
+        <tr><td><code>status</code></td><td>str</td><td>State tracking flag</td><td>Defaults to <code>"pending"</code>, flags to <code>"dispensed"</code></td></tr>
+    </table>
+
+    <h3>6. medical_records Collection</h3>
+    <p>Stores clinical document titles, file types, and Cloudinary access URLs.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>patient_id</code></td><td>str</td><td><span class="badge badge-fk">fk</span> Search Index Link</td><td>Maps back to matching target profile <code>patients.user_id</code></td></tr>
+        <tr><td><code>document_url</code></td><td>str</td><td>CDN Network Asset Link</td><td>Cloudinary CDN endpoint file tracking location</td></tr>
+    </table>
+
+    <h3>7. lab_tests Collection</h3>
+    <p>Tracks diagnostic orders, priority statuses, and report attachments.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>status</code></td><td>str</td><td>State Matrix Flag</td><td>Requested, Sample Collection, Testing, Report Generation</td></tr>
+        <tr><td><code>report_url</code></td><td>str</td><td>Cloudinary PDF String File</td><td>Null on request, updates on technician upload completion</td></tr>
+    </table>
+
+    <h3>8. medicines Collection</h3>
+    <p>Tracks real-time pharmacy inventory counts and reorder alert flags.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>name</code></td><td>str</td><td><span class="badge badge-idx">idx</span> Unique Constraint Name</td><td>Pharmacy item catalog lookups parameter string</td></tr>
+        <tr><td><code>stock_quantity</code></td><td>int</td><td>Inventory Asset Ledger</td><td>Deducted automatically upon pharmacy dispensation fulfillment</td></tr>
+    </table>
+
+    <h3>9. invoices Collection</h3>
+    <p>Tracks consultation billing lines, totals, and invoice statuses.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>status</code></td><td>str</td><td>Ledger Payment Indicator</td><td>Tracks status state transitions: unpaid, paid</td></tr>
+    </table>
+
+    <h3>10. notifications Collection</h3>
+    <p>Queues notification entries and tracks delivery status for user dashboards.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>user_id</code></td><td>str</td><td><span class="badge badge-fk">fk</span> Inbox Index Target</td><td>Binds alerts directly to recipient profile inboxes</td></tr>
+    </table>
+
+    <h3>11. audit_logs Collection</h3>
+    <p>Records a secure, immutable audit trail of all database write and deletion events.</p>
+    <table>
+        <tr><th>Field Name</th><th>Data Model Type</th><th>Key / Constraint Type</th><th>Relational Destination Mapping</th></tr>
+        <tr><td><code>_id</code></td><td>ObjectId</td><td><span class="badge badge-pk">pk</span> Unique ID</td><td>System Automatic Baseline Allocation</td></tr>
+        <tr><td><code>user_id</code></td><td>str</td><td><span class="badge badge-idx">idx</span> Activity Index Log</td><td>Tracks the identity string of the user who signed off on the payload</td></tr>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h1>3. Cognitive AI Agent Infrastructure & Stateless Context Orchestration</h1>
+    <p>The system integrates an intelligence orchestration engine powered by the Groq cloud infrastructure, calling the LLAMA 3.1 70B Versatile model to ensure prompt response times well under the 2-second user experience threshold. LLM interactions are decoupled from route handlers and abstracted behind a structured LangChain pipeline framework.</p>
+
+    <h2>3.1 Data Token Aggregation Engine (StuffDocumentsChain Pattern)</h2>
+    <p>To generate summaries without the overhead of semantic search vectors, the system reads relational documents from MongoDB and bundles them into a single comprehensive context template context payload block:</p>
+    <div class="diagram">
++───────────────────────────────────────────────────────────────────────────+
+│                       INCOMING SERVICE RUN TRIGGER TIME                   │
++───────────────────────────────────────────────────────────────────────────+
+  │ Query Patient Model    │ Query Appointments     │ Query Clinical Models
+  ▼                        ▼                        ▼
+[ User Demographics ]    [ Chronological Logs ]   [ All Active Prescriptions ]
+  │                        │                        │
+  └────────────────────────┼────────────────────────┘
+                           ▼
+  +───────────────────────────────────────────────────────────────────────+
+  │  CONSOLIDATED CONTEXT STRING BLOCK (Delimited Data Segment Enclosure) │
+  +───────────────────────────────────────────────────────────────────────+
+                           │
+                           ▼ Pipes context block into LangChain Pipeline Base
+  +───────────────────────────────────────────────────────────────────────+
+  │  GROQ API CLOUD INFERENCE ROUTER (LLAMA 3.1 70B Versatile Processor)  │
+  +───────────────────────────────────────────────────────────────────────+
+                           │
+                           ▼ Enforces JSON parameters extraction sequence
+  +───────────────────────────────────────────────────────────────────────+
+  │   JSON OUTPUT PARSER ENGINE (Predictable, type-safe JSON returns)     │
+  +───────────────────────────────────────────────────────────────────────+</div>
+
+    <h2>3.2 State Optimization Profiles</h2>
+    <ul>
+        <li><strong>Stateless Operations (One-Shot Task Framework):** Endpoints like symptom checking, clinical summaries, automated scheduling triage, and business operations insight dashboards handle requests statelessly. Each API payload packages all required data variables, eliminating session lookups and allowing backend workers to scale efficiently.</li>
+        <li><strong>Stateful Operations (Conversational Memory Buffering):** The interactive floating web widget uses active stateful history buffering. It appends ongoing conversational token streams into local memory storage hooks and transmits the transaction arrays with each user message, maintaining continuous context.</li>
+    </ul>
+
+    <h2>3.3 Adaptive Logic Controls & Safety Fallbacks</h2>
+    <p>To maintain continuity during network connectivity issues or external provider downtime, the routers integrate an internal fallback layer:</p>
+    <ul>
+        <li><strong>Heuristic Keyword Pattern Triage Router:** If connection drops trigger an exception, the system redirects the request through a local pattern matching matrix. If input parameters contain keywords like <em>"chest pressure"</em>, <em>"palpitations"</em>, or <em>"shortness of breath"</em>, the fallback engine automatically routes the request to Cardiology with high urgency, bypassing the offline LLM to protect data and preserve uptime.</li>
+    </ul>
+
+    <div class="page-break"></div>
+
+    <h1>4. Unified System Prompts Matrix Mapping</h1>
+    <p>To enforce absolute data predictability, eliminate formatting variability, and prevent model drift, all cognitive instructions are separated from the application layer and maintained inside a centralized repository constant file:</p>
+    
+    <pre><code>"""
+HospitalOS Production Prompt Constants Matrix Repository
+Isolates system prompt strings to enforce clean, type-safe JSON payloads.
+"""
+
+# =========================================================================
+# FEATURE 1: AI SYMPTOM ANALYZER PROMPT CONSTANT
+# =========================================================================
+SYMPTOM_ANALYZER_SYSTEM = """You are an elite clinical medical triage coordinator.
+Analyze the patient's symptoms, age, and gender parameters.
+You must return your response as a valid JSON object matching this schema:
+{{
+  "possible_conditions": ["Condition 1", "Condition 2"],
+  "recommended_department": "Cardiology|Neurology|Pediatrics|General Practice",
+  "urgency": "HIGH|MEDIUM|LOW",
+  "rationale": "Brief professional text explaining the safety reasoning.",
+  "disclaimer": "Not a medical diagnosis. Consult healthcare staff immediately."
+}}
+Do not include conversational preamble, trailing notes, or markdown backticks outside of the raw JSON payload.
+"""
+
+# =========================================================================
+# FEATURE 2: AI MEDICAL RECORD SUMMARIZER PROMPT CONSTANT
+# =========================================================================
+CLINICAL_SUMMARY_SYSTEM = """You are an expert clinical document analyst.
+Review the provided patient health metrics and historical visit logs.
+Compile a clear, professional medical synopsis tailored for an attending physician.
+Highlight active chronic conditions, prior surgical procedures, and known drug allergies.
+Maintain a formal, objective, and highly technical medical tone throughout.
+"""
+
+# =========================================================================
+# FEATURE 3: AI PRESCRIPTION EXPLANATION BOT PROMPT CONSTANT
+# =========================================================================
+PRESCRIPTION_BOT_SYSTEM = """You are an empathetic, clear clinical pharmacist.
+Review the prescribed medication list.
+Explain medication purposes, dosage frequencies, and potential side effects to the patient.
+Use accessible, comforting, layman-friendly language. Avoid complex medical jargon.
+"""
+
+# =========================================================================
+# FEATURE 4: AI APPOINTMENT ASSISTANT PROMPT CONSTANT
+# =========================================================================
+APPOINTMENT_ASSIST_SYSTEM = """You are a hospital resource scheduling coordinator.
+Analyze the patient's conversational description of their medical issue.
+Determine the target department specialized to handle the case.
+Return your response as a valid JSON object matching this schema:
+{{
+  "extracted_specialty": "Cardiology|Neurology|Pediatrics|General Practice",
+  "urgency_classification": "ROUTINE|HIGH|EMERGENCY",
+  "search_keyword": "symptom keyword used to filter staff"
+}}
+"""
+
+# =========================================================================
+# FEATURE 5: AI OPERATIONS DASHBOARD PROMPT CONSTANT
+# =========================================================================
+OPERATIONS_INSIGHT_SYSTEM = """You are an elite hospital operations management analyst.
+Review the daily system metrics, financial summaries, and room availability data.
+Answer the administrator's question by identifying trends, structural bottlenecks, or operational patterns.
+Provide 2-3 specific, actionable recommendations focused on maximizing efficiency and revenue.
+"""</code></pre>
+
+    <div class="page-break"></div>
+
+    <h1>5. 5-Day Sprint Execution Matrix & Cross-Department Functional Framework</h1>
+    <p>This deployment schedule coordinates concurrent backlogs across the engineering team to ensure absolute integration coverage across all development modules:</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Timeline Tracker</th>
+                <th>Member M1 (Auth & Core)</th>
+                <th>Member M2 (Schedule & Pay)</th>
+                <th>Member M3 (Clinical Engine)</th>
+                <th>Member M4 (Frontend UX)</th>
+                <th>Member M5 (AI & DevOps)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>DAY 1: Foundations</strong></td>
+                <td>MongoDB Atlas initialization, Beanie model bindings, JWT authentication logic.</td>
+                <td>Celery background task setup, slot allocation structures.</td>
+                <td>Cloudinary CDN integrations, multipart storage modules.</td>
+                <td>Folder structure scaffolding, Axios request interceptors, AuthContext.</td>
+                <td>Groq API connection layer, structured symptom analysis models.</td>
+            </tr>
+            <tr>
+                <td><strong>DAY 2: Core Routing</strong></td>
+                <td>Patient/Doctor CRUD endpoints, AuditLog logger middleware.</td>
+                <td>Department sorting, email configurations, billing schemas.</td>
+                <td>Prescription inputs, lab tracking queues, medicine logs.</td>
+                <td>Query engine hooks, patient wizard dashboards, doctor profiles.</td>
+                <td>Medical history summarizer, natural language triage assistants.</td>
+            </tr>
+            <tr>
+                <td><strong>DAY 3: Integration</strong></td>
+                <td>Revenue aggregations, emergency fast-admit routers.</td>
+                <td>Internal notifications, calendar grid structures.</td>
+                <td>Database schema validations, EMR text search filters.</td>
+                <td>Admin analytics widgets, nurse/lab dashboards.</td>
+                <td>Container orchestration, Render.com backend deployments.</td>
+            </tr>
+            <tr>
+                <td><strong>DAY 4: Refinement</strong></td>
+                <td>Security policy checks, production database configurations.</td>
+                <td>E2E flow diagnostics, Pytest unit tests.</td>
+                <td>Prescription queue syncs, Cloudinary access checks.</td>
+                <td>Symptom checkers panel, history panel integrations.</td>
+                <td>Prompt isolation configurations, deployment verification checks.</td>
+            </tr>
+            <tr>
+                <td><strong>DAY 5: Delivery</strong></td>
+                <td>RBAC adjustments, documentation compilations, release tags.</td>
+                <td>Populate sandbox seed data, reconcile billing lines.</td>
+                <td>Fulfill test orders, finalize visual asset maps.</td>
+                <td>Recharts debugging passes, load state visual spinner checks.</td>
+                <td>Assembles the 4 core deliverables, submits clean main production branch.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 style="margin-top: 30px;">5.1 Verification Checklist for Project Submission</h2>
+    <p>To verify the deployment readiness of your environment before final evaluator review, cross-reference your system assets against this production checklist:</p>
+    <ul>
+        <li><strong>[ ] Clean GitHub Repository Structure:</strong> Main production branch tagged with version identifier <code>v1.0.0</code>.</li>
+        <li><strong>[ ] Documentation Completeness:</strong> Ensure all four mandated files (Prompts Matrix, Database Design, System Architecture, and AI Agent Design) are saved inside the <code>/docs</code> directory.</li>
+        <li><strong>[ ] Live Endpoints:</strong> Confirm the Render API URL and Vercel client application are online and talking to each other across domains.</li>
+        <li><strong>[ ] Type-Safe AI:</strong> Verify that cognitive functions successfully return type-safe JSON objects without conversational text leakage.</li>
+    </ul>
+
+</body>
+</html>
